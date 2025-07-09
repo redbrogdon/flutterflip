@@ -40,8 +40,8 @@ class FlutterFlipApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         return PageRouteBuilder<dynamic>(
           settings: settings,
-          pageBuilder:
-              (context, animation, secondaryAnimation) => const GameScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const GameScreen(),
         );
       },
     );
@@ -91,33 +91,34 @@ class GameScreenState extends State<GameScreen> {
     // moves, and models with the results of CPU moves. These are fed into the
     // StreamBuilder in [build], and used to create the widgets that comprise
     // the game's display.
-    _modelStream = StreamGroup.merge([
-      _userMovesController.stream,
-      _restartController.stream,
-    ]).asyncExpand((model) async* {
-      yield model;
+    _modelStream =
+        StreamGroup.merge([
+          _userMovesController.stream,
+          _restartController.stream,
+        ]).asyncExpand((model) async* {
+          yield model;
 
-      var newModel = model;
+          var newModel = model;
 
-      while (newModel.player == PieceType.white) {
-        final finder = MoveFinder(newModel.board);
-        final moveFuture = finder.findNextMove(newModel.player, 5);
+          while (newModel.player == PieceType.white) {
+            final finder = MoveFinder(newModel.board);
+            final moveFuture = finder.findNextMove(newModel.player, 5);
 
-        // Guarantee the move takes at least a second to arrive, giving the UI
-        // a chance to animate for each move.
-        final result = await Future.wait([
-          moveFuture,
-          Future.delayed(Duration(seconds: 1)),
-        ]);
+            // Guarantee the move takes at least a second to arrive, giving the UI
+            // a chance to animate for each move.
+            final result = await Future.wait([
+              moveFuture,
+              Future.delayed(Duration(seconds: 1)),
+            ]);
 
-        final move = result[0] as Position?;
+            final move = result[0] as Position?;
 
-        if (move != null) {
-          newModel = newModel.updateForMove(move.x, move.y);
-          yield newModel;
-        }
-      }
-    });
+            if (move != null) {
+              newModel = newModel.updateForMove(move.x, move.y);
+              yield newModel;
+            }
+          }
+        });
   }
 
   // Thou shalt tidy up thy stream controllers.
@@ -155,16 +156,14 @@ class GameScreenState extends State<GameScreen> {
 
   Widget _buildScoreBox(PieceType player, GameModel model) {
     var label = player == PieceType.black ? 'black' : 'white';
-    var scoreText =
-        player == PieceType.black
-            ? '${model.blackScore}'
-            : '${model.whiteScore}';
+    var scoreText = player == PieceType.black
+        ? '${model.blackScore}'
+        : '${model.whiteScore}';
 
     return DecoratedBox(
-      decoration:
-          (model.player == player)
-              ? Styling.activePlayerIndicator
-              : Styling.inactivePlayerIndicator,
+      decoration: (model.player == player)
+          ? Styling.activePlayerIndicator
+          : Styling.inactivePlayerIndicator,
       child: Column(
         children: <Widget>[
           Text(

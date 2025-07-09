@@ -34,10 +34,9 @@ class _ThinkingIndicatorState
         height: widget.height,
         child: Opacity(
           opacity: _opacityTween!.evaluate(animation),
-          child:
-              _opacityTween!.evaluate(animation) != 0
-                  ? AnimatedCircles(color: widget.color, height: widget.height)
-                  : null,
+          child: _opacityTween!.evaluate(animation) != 0
+              ? AnimatedCircles(color: widget.color, height: widget.height)
+              : null,
         ),
       ),
     );
@@ -73,15 +72,18 @@ class AnimatedCirclesState extends State<AnimatedCircles>
   @override
   void initState() {
     super.initState();
-    _thinkingController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    )..addStatusListener((status) {
-      // This bit ensures that the animation reverses course rather than
-      // stopping.
-      if (status == AnimationStatus.completed) _thinkingController.reverse();
-      if (status == AnimationStatus.dismissed) _thinkingController.forward();
-    });
+    _thinkingController =
+        AnimationController(
+          duration: const Duration(milliseconds: 500),
+          vsync: this,
+        )..addStatusListener((status) {
+          // This bit ensures that the animation reverses course rather than
+          // stopping.
+          if (status == AnimationStatus.completed)
+            _thinkingController.reverse();
+          if (status == AnimationStatus.dismissed)
+            _thinkingController.forward();
+        });
     _thinkingAnimation = Tween(begin: 0.0, end: widget.height).animate(
       CurvedAnimation(parent: _thinkingController, curve: Curves.easeOut),
     );
