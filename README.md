@@ -22,6 +22,11 @@ source example. The tech used includes:
 * Implicit animations like [AnimatedOpacity](https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html)
   and [AnimatedContainer](https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html).
 
-If you spot a bug, feel free to file an issue report. You should also feel
-free to fork the repo and redo the UI into something snazzier. If you do,
-post a picture on Twitter!
+If you spot a bug, feel free to file an issue report.
+
+## Monorepo Architecture
+
+This codebase is organized as a monorepo workspace containing two packages:
+- **`packages/flutterflip_shared`**: A pure Dart package containing the core board state representation, score evaluation heuristics, and game models (`GameBoard`, `GameModel`, `GameBoardScorer`).
+- **`packages/flutterflip`**: The Flutter client application containing all widget trees, visual theme structures, platform directories, assets, and isolate-based engine solver calculations (`MoveFinder`).
+
