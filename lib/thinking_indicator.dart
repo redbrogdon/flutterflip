@@ -79,10 +79,12 @@ class AnimatedCirclesState extends State<AnimatedCircles>
         )..addStatusListener((status) {
           // This bit ensures that the animation reverses course rather than
           // stopping.
-          if (status == AnimationStatus.completed)
+          if (status == AnimationStatus.completed) {
             _thinkingController.reverse();
-          if (status == AnimationStatus.dismissed)
+          }
+          if (status == AnimationStatus.dismissed) {
             _thinkingController.forward();
+          }
         });
     _thinkingAnimation = Tween(begin: 0.0, end: widget.height).animate(
       CurvedAnimation(parent: _thinkingController, curve: Curves.easeOut),

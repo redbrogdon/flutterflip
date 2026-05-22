@@ -108,7 +108,7 @@ class GameScreenState extends State<GameScreen> {
             // a chance to animate for each move.
             final result = await Future.wait([
               moveFuture,
-              Future.delayed(Duration(seconds: 1)),
+              Future<void>.delayed(Duration(seconds: 1)),
             ]);
 
             final move = result[0] as Position?;
