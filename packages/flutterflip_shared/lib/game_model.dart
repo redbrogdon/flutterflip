@@ -16,7 +16,9 @@ class GameModel {
 
   int get whiteScore => board.getPieceCount(PieceType.white);
 
-  bool get gameIsOver => (board.getMovesForPlayer(player).isEmpty);
+  bool get gameIsOver =>
+      board.getMovesForPlayer(PieceType.black).isEmpty &&
+      board.getMovesForPlayer(PieceType.white).isEmpty;
 
   String get gameResultString {
     if (blackScore > whiteScore) {
