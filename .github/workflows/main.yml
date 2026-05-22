@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  shared:
+    name: "Shared Package"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -17,33 +18,53 @@ jobs:
       with:
         channel: 'stable'
 
-    - name: Print Flutter version
-      run: flutter --version
-
-    - name: Install dependencies (Workspace-wide)
+    - name: Install dependencies
       run: flutter pub get
 
-    # flutterflip_shared
-    - name: "[Shared] Format Check"
+    - name: Format Check
       run: dart format --output none --set-exit-if-changed packages/flutterflip_shared
 
-    - name: "[Shared] Analyze"
+    - name: Analyze
       run: dart analyze --fatal-infos packages/flutterflip_shared
 
-    # flutterflip_server
-    - name: "[Server] Format Check"
+  server:
+    name: "Server Package"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Format Check
       run: dart format --output none --set-exit-if-changed packages/flutterflip_server
 
-    - name: "[Server] Analyze"
+    - name: Analyze
       run: dart analyze --fatal-infos packages/flutterflip_server
 
-    # flutterflip (Client App)
-    - name: "[Client] Format Check"
+  client:
+    name: "Client App Package"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Format Check
       run: dart format --output none --set-exit-if-changed packages/flutterflip
 
-    - name: "[Client] Analyze"
+    - name: Analyze
       run: flutter analyze --fatal-infos packages/flutterflip
 
-    - name: "[Client] Run Tests"
+    - name: Run Tests
       working-directory: packages/flutterflip
       run: flutter test
