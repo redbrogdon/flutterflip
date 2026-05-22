@@ -43,18 +43,16 @@ Before running the server, ensure you have the following installed:
 To spin up the Firebase Functions emulator locally and test your endpoint:
 
 1. **Start the Emulator Suite** (run from the monorepo root directory):
+
+   Using the locally installed version:
    ```bash
    npx firebase emulators:start
    ```
-   *Note: If you have `firebase-tools` installed globally, you can also run `firebase emulators:start` directly.*
 
-2. **Emulator Lifecycle**:
-   - The emulator will bootstrap, download necessary dependencies, and execute a code generation pass.
-   - The CLI compiles your Dart entry point in `bin/server.dart` via `build_runner` into a self-contained Node.js execution unit.
-   - Once completed, the Functions emulator will list the active local routes, usually:
-     ```text
-     ✔  functions[us-central1-get-move]: http://127.0.0.1:5001/demo-no-project/us-central1/get-move
-     ```
+   Using a globally installed version:
+   ```bash
+   firebase emulators:start
+   ```
 
 ---
 
