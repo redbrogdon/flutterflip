@@ -8,3 +8,4 @@ environment:
 workspace:
   - packages/flutterflip_shared
   - packages/flutterflip
+  - packages/flutterflip_server

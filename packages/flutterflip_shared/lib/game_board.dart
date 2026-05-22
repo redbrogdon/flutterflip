@@ -42,6 +42,43 @@ class GameBoard {
   GameBoard.fromGameBoard(GameBoard other)
     : rows = List.generate(height, (i) => List.from(other.rows[i]));
 
+  /// Creates a GameBoard with custom rows, performing a deep copy to ensure immutability.
+  GameBoard.withRows(List<List<PieceType>> rows)
+    : rows = List.generate(height, (i) => List.from(rows[i]));
+
+  /// Creates a GameBoard from a 64-character flat string representation.
+  /// 'B' = black, 'W' = white, '.' (or any other character) = empty.
+  factory GameBoard.fromString(String boardStr) {
+    assert(boardStr.length == width * height);
+    final customRows = List.generate(
+      height,
+      (y) => List.generate(width, (x) {
+        final char = boardStr[y * width + x];
+        return switch (char) {
+          'B' || 'b' => PieceType.black,
+          'W' || 'w' => PieceType.white,
+          _ => PieceType.empty,
+        };
+      }),
+    );
+    return GameBoard.withRows(customRows);
+  }
+
+  /// Converts this GameBoard to a 64-character flat string representation.
+  String toBoardString() {
+    final buffer = StringBuffer();
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        buffer.write(switch (rows[y][x]) {
+          PieceType.black => 'B',
+          PieceType.white => 'W',
+          PieceType.empty => '.',
+        });
+      }
+    }
+    return buffer.toString();
+  }
+
   /// Retrieves the type of piece at a location on the game board.
   PieceType getPieceAtLocation(int x, int y) {
     assert(x >= 0 && x < width);
