@@ -47,7 +47,8 @@ class GameBoard {
     : rows = List.generate(height, (i) => List.from(rows[i]));
 
   /// Creates a GameBoard from a 64-character flat string representation.
-  /// 'B' = black, 'W' = white, '.' (or any other character) = empty.
+  /// 'B'/'b' = black, 'W'/'w' = white, and '.' = empty.
+  /// Throws a [FormatException] if any other characters are present.
   factory GameBoard.fromString(String boardStr) {
     assert(boardStr.length == width * height);
     final customRows = List.generate(
@@ -57,7 +58,11 @@ class GameBoard {
         return switch (char) {
           'B' || 'b' => PieceType.black,
           'W' || 'w' => PieceType.white,
-          _ => PieceType.empty,
+          '.' => PieceType.empty,
+          _ => throw FormatException(
+              'Invalid character "$char" at board index ${y * width + x}. '
+              'Only "B", "W", and "." are allowed.',
+            ),
         };
       }),
     );

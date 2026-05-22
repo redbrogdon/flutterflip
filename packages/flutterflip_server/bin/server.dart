@@ -59,6 +59,11 @@ void main(List<String> args) {
             'cache-control': 'public, max-age=3600', // Cacheable for 1 hour
           },
         );
+      } on FormatException catch (e) {
+        return Response(
+          400,
+          body: 'Invalid "board" parameter content: ${e.message}',
+        );
       } catch (e) {
         return Response(500, body: 'Error processing request: $e');
       }
