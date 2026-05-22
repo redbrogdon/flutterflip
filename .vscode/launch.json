@@ -7,19 +7,22 @@
         {
             "name": "flutterflip",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "cwd": "packages/flutterflip"
         },
         {
             "name": "flutterflip (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "cwd": "packages/flutterflip"
         },
         {
             "name": "flutterflip (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "cwd": "packages/flutterflip"
         }
     ]
 }
