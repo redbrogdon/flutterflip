@@ -48,11 +48,9 @@ void main(List<String> args) {
 
         return Response.ok(
           jsonEncode({
-            'player': playerStr,
             'move': bestMove != null
                 ? {'x': bestMove.x, 'y': bestMove.y}
                 : null,
-            'depth': depth,
           }),
           headers: {
             'content-type': 'application/json',

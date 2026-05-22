@@ -50,7 +50,11 @@ class GameBoard {
   /// 'B'/'b' = black, 'W'/'w' = white, and '.' = empty.
   /// Throws a [FormatException] if any other characters are present.
   factory GameBoard.fromString(String boardStr) {
-    assert(boardStr.length == width * height);
+    if (boardStr.length != width * height) {
+      throw FormatException(
+        'Board string must be exactly ${width * height} characters long.',
+      );
+    }
     final customRows = List.generate(
       height,
       (y) => List.generate(width, (x) {
@@ -60,9 +64,9 @@ class GameBoard {
           'W' || 'w' => PieceType.white,
           '.' => PieceType.empty,
           _ => throw FormatException(
-              'Invalid character "$char" at board index ${y * width + x}. '
-              'Only "B", "W", and "." are allowed.',
-            ),
+            'Invalid character "$char" at board index ${y * width + x}. '
+            'Only "B", "W", and "." are allowed.',
+          ),
         };
       }),
     );
