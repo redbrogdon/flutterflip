@@ -60,20 +60,20 @@ To spin up the Firebase Functions emulator locally and test your endpoint:
 
 ### GET `/get-move`
 
-Computes the best next move for the active player on a given board layout.
+Computes the best next Reversi move for a given board layout.
 
 #### Query Parameters
 
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `board` | `string` | **Yes** | 64-character representation of the board using `.` (empty), `X` (black), and `O` (white). |
-| `active` | `string` | **Yes** | The active player: `X` or `O`. |
+| `board` | `string` | **Yes** | A 64-character representation of the board using `.` (empty), `B`/`b` (black), and `W`/`w` (white). |
+| `player` | `string` | **Yes** | The active player whose turn it is to move: `black` or `white` (case-insensitive). |
 | `depth` | `int` | No | Search depth (min: `1`, max: `6`). Defaults to `4`. Clamped automatically if out of range. |
 
 #### Example Request
 
 ```bash
-curl -i "http://127.0.0.1:5001/demo-no-project/us-central1/get-move?active=X&depth=4&board=...........................OX......XO...........................X"
+curl -i "http://127.0.0.1:5001/demo-no-project/us-central1/get-move?player=black&depth=4&board=...........................BW......WB..........................."
 ```
 
 #### Example Success Response (`200 OK`)
@@ -85,20 +85,21 @@ cache-control: public, max-age=3600
 ...
 
 {
-  "move": [2, 3]
+  "move": {
+    "x": 2,
+    "y": 3
+  }
 }
 ```
 
 #### Example Error Response (`400 Bad Request`)
 
-If parameters are missing or invalid:
+If parameters are missing, invalid, or contain unrecognized characters:
 
-```json
+```text
 HTTP/1.1 400 Bad Request
-content-type: application/json; charset=utf-8
+content-type: text/plain; charset=utf-8
 ...
 
-{
-  "error": "board must be exactly 64 characters long"
-}
+Invalid or missing "player" parameter. Must be "black" or "white".
 ```
