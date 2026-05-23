@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
-import 'package:async/async.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutterflip_shared/game_board.dart';
-import 'package:flutterflip_shared/game_model.dart';
-import 'move_finder.dart';
+import 'bloc/game_bloc.dart';
 import 'styling.dart';
 import 'thinking_indicator.dart';
 
@@ -41,7 +38,10 @@ class FlutterFlipApp extends StatelessWidget {
         return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const GameScreen(),
+              BlocProvider(
+                create: (_) => GameBloc()..add(const StartGame()),
+                child: const GameScreen(),
+              ),
         );
       },
     );
@@ -58,110 +58,22 @@ class GameScreen extends StatefulWidget {
 }
 
 /// State class for [GameScreen].
-///
-/// The game is modeled as a [Stream] of immutable instances of [GameModel].
-/// Each move by the player or CPU results in a new [GameModel], which is
-/// sent downstream. [GameScreen] uses a [StreamBuilder] wired up to that stream
-/// of models to build out its [Widget] tree.
 class GameScreenState extends State<GameScreen> {
-  final StreamController<GameModel> _userMovesController =
-      StreamController<GameModel>();
-  final StreamController<GameModel> _restartController =
-      StreamController<GameModel>();
-  Stream<GameModel>? _modelStream;
-
-  GameScreenState() {
-    // Below is the combination of streams that controls the flow of the game.
-    // There are two streams of models produced by player interaction (either by
-    // restarting the game, which produces a brand new game model and sends it
-    // downstream, or tapping on one of the board locations to play a piece, and
-    // which creates a new board model with the result of the move and sends it
-    // downstream. The StreamGroup combines these into a single stream, then
-    // does a little trick with asyncExpand.
-    //
-    // The function used in asyncExpand checks to see if it's the CPU's turn
-    // (white), and if so creates a [MoveFinder] to look for the best move. It
-    // awaits the calculation, and then creates a new [GameModel] with the
-    // result of that move and sends it downstream by yielding it. If it's still
-    // the CPU's turn after making that move (which can happen in reversi), this
-    // is repeated.
-    //
-    // The final stream of models that exits the asyncExpand call is a
-    // combination of "new game" models, models with the results of player
-    // moves, and models with the results of CPU moves. These are fed into the
-    // StreamBuilder in [build], and used to create the widgets that comprise
-    // the game's display.
-    _modelStream =
-        StreamGroup.merge([
-          _userMovesController.stream,
-          _restartController.stream,
-        ]).asyncExpand((model) async* {
-          yield model;
-
-          var newModel = model;
-
-          while (newModel.player == PieceType.white) {
-            final finder = MoveFinder(newModel.board);
-            final moveFuture = finder.findNextMove(newModel.player, 5);
-
-            // Guarantee the move takes at least a second to arrive, giving the UI
-            // a chance to animate for each move.
-            final result = await Future.wait([
-              moveFuture,
-              Future<void>.delayed(Duration(seconds: 1)),
-            ]);
-
-            final move = result[0] as Position?;
-
-            if (move != null) {
-              newModel = newModel.updateForMove(move.x, move.y);
-              yield newModel;
-            }
-          }
-        });
+  // Tapping a grid cell dispatches a PlayMove event to the BLoC.
+  void _attemptUserMove(BuildContext context, int x, int y) {
+    context.read<GameBloc>().add(PlayMove(x, y));
   }
 
-  // Thou shalt tidy up thy stream controllers.
-  @override
-  void dispose() {
-    _userMovesController.close();
-    _restartController.close();
-    super.dispose();
-  }
+  Widget _buildScoreBox(PieceType player, GameState state) {
+    final label = player == PieceType.black ? 'black' : 'white';
+    final scoreText = player == PieceType.black
+        ? '${state.model.blackScore}'
+        : '${state.model.whiteScore}';
 
-  /// The build method mostly just sets up the StreamBuilder and leaves the
-  /// details to _buildWidgets.
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<GameModel>(
-      stream: _modelStream,
-      builder: (context, snapshot) {
-        return _buildWidgets(
-          context,
-          snapshot.hasData ? snapshot.data! : GameModel(board: GameBoard()),
-        );
-      },
-    );
-  }
-
-  // Called when the user taps on the game's board display. If it's the player's
-  // turn, this method will attempt to make the move, creating a new GameModel
-  // in the process.
-  void _attemptUserMove(GameModel model, int x, int y) {
-    if (model.player == PieceType.black &&
-        model.board.isLegalMove(x, y, model.player)) {
-      _userMovesController.add(model.updateForMove(x, y));
-    }
-  }
-
-  Widget _buildScoreBox(PieceType player, GameModel model) {
-    var label = player == PieceType.black ? 'black' : 'white';
-    var scoreText = player == PieceType.black
-        ? '${model.blackScore}'
-        : '${model.whiteScore}';
+    final isActive = state.model.player == player && state.status != GameStatus.complete;
 
     return DecoratedBox(
-      decoration: (model.player == player)
+      decoration: isActive
           ? Styling.activePlayerIndicator
           : Styling.inactivePlayerIndicator,
       child: Column(
@@ -181,7 +93,7 @@ class GameScreenState extends State<GameScreen> {
     );
   }
 
-  List<Widget> _buildGameBoardDisplay(BuildContext context, GameModel model) {
+  List<Widget> _buildGameBoardDisplay(BuildContext context, GameState state) {
     final rows = <Widget>[];
 
     for (var y = 0; y < GameBoard.height; y++) {
@@ -194,14 +106,14 @@ class GameScreenState extends State<GameScreen> {
             margin: const EdgeInsets.all(1.0),
             decoration: BoxDecoration(
               gradient:
-                  Styling.pieceGradients[model.board.getPieceAtLocation(x, y)],
+                  Styling.pieceGradients[state.model.board.getPieceAtLocation(x, y)],
             ),
             child: SizedBox(
               width: 40.0,
               height: 40.0,
               child: GestureDetector(
                 onTap: () {
-                  _attemptUserMove(model, x, y);
+                  _attemptUserMove(context, x, y);
                 },
               ),
             ),
@@ -221,36 +133,41 @@ class GameScreenState extends State<GameScreen> {
     return rows;
   }
 
-  Opacity _buildGameResult(GameModel model) {
+  Widget _buildGameResult(BuildContext context, GameState state) {
+    final isComplete = state.status == GameStatus.complete;
+
     return Opacity(
-      opacity: model.gameIsOver ? 1 : 0,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(model.gameResultString, style: Styling.resultText),
-          const SizedBox(height: 30),
-          GestureDetector(
-            onTap: () {
-              _restartController.add(GameModel(board: GameBoard()));
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xe0ffffff)),
-                borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(15, 5, 15, 9),
-                child: Text('new game', style: Styling.buttonText),
+      opacity: isComplete ? 1 : 0,
+      child: IgnorePointer(
+        ignoring: !isComplete,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(state.model.gameResultString, style: Styling.resultText),
+            const SizedBox(height: 30),
+            GestureDetector(
+              onTap: () {
+                context.read<GameBloc>().add(const StartGame());
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xe0ffffff)),
+                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 9),
+                  child: Text('new game', style: Styling.buttonText),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // Builds out the Widget tree using the most recent GameModel from the stream.
-  Widget _buildWidgets(BuildContext context, GameModel model) {
+  // Builds out the Widget tree using the GameState from the BlocBuilder.
+  Widget _buildWidgets(BuildContext context, GameState state) {
     return Container(
       padding: const EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
       decoration: const BoxDecoration(
@@ -270,26 +187,35 @@ class GameScreenState extends State<GameScreen> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildScoreBox(PieceType.black, model),
+                  _buildScoreBox(PieceType.black, state),
                   const SizedBox(width: 100),
-                  _buildScoreBox(PieceType.white, model),
+                  _buildScoreBox(PieceType.white, state),
                 ],
               ),
               const SizedBox(height: 20),
               ThinkingIndicator(
                 color: Styling.thinkingColor,
                 height: Styling.thinkingSize,
-                visible: model.player == PieceType.white,
+                visible: state.status == GameStatus.processing,
               ),
               const SizedBox(height: 20),
-              ..._buildGameBoardDisplay(context, model),
+              ..._buildGameBoardDisplay(context, state),
               const SizedBox(height: 30),
-              _buildGameResult(model),
+              _buildGameResult(context, state),
               const SizedBox(height: 30),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) {
+        return _buildWidgets(context, state);
+      },
     );
   }
 }

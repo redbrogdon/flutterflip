@@ -28,5 +28,5 @@ If you spot a bug, feel free to file an issue report.
 
 This codebase is organized as a monorepo workspace containing two packages:
 - **`packages/flutterflip_shared`**: A pure Dart package containing the core board state representation, score evaluation heuristics, and game models (`GameBoard`, `GameModel`, `GameBoardScorer`).
-- **`packages/flutterflip`**: The Flutter client application containing all widget trees, visual theme structures, platform directories, assets, and isolate-based engine solver calculations (`MoveFinder`).
+- **`packages/flutterflip`**: The Flutter client application containing all widget trees, visual theme structures, platform directories, assets, and isolate-based engine move finder calculations (`MoveFinder`).
 

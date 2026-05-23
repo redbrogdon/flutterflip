@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:math' as math;
 import 'package:firebase_functions/firebase_functions.dart';
 import 'package:flutterflip_shared/game_board.dart';
-import 'package:flutterflip_server/move_solver.dart';
+import 'package:flutterflip_shared/move_finder.dart';
 
 void main(List<String> args) {
   fireUp(args, (Firebase firebase) {
-    // Solve/Find Move Endpoint
+    // Find Move Endpoint
     firebase.https.onRequest(name: 'getMove', (Request request) async {
       if (request.method != 'GET') {
         return Response(405, body: 'Method Not Allowed');
@@ -41,7 +40,7 @@ void main(List<String> args) {
         }
 
         // Security & Timeout Defense: Clamp depth to a safe, robust range (1 to 6)
-        final depth = math.max(1, math.min(requestedDepth, 6));
+        final depth = requestedDepth.clamp(1, 6);
 
         final board = GameBoard.fromString(boardStr);
         final bestMove = findBestMove(board, player, depth);

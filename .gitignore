@@ -54,3 +54,6 @@ app.*.map.json
 *-debug.log
 **/functions.yaml
 node_modules/
+
+# Local Environment Configuration
+**/config/*.local.json

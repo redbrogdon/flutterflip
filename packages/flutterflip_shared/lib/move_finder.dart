@@ -1,5 +1,5 @@
-import 'package:flutterflip_shared/game_board.dart';
-import 'package:flutterflip_shared/game_board_scorer.dart';
+import 'game_board.dart';
+import 'game_board_scorer.dart';
 
 class ScoredMove {
   final int score;

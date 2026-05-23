@@ -10,6 +10,8 @@ dependencies:
   async: ^2.13.1
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.6
+  http: ^1.2.1
   flutterflip_shared:
     path: ../flutterflip_shared
 

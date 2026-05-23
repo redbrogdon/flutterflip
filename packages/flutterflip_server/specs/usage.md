@@ -114,7 +114,7 @@ Method Not Allowed
 ```
 
 ### 6.3 Server Error (`500 Internal Server Error`)
-Returned when an unexpected runtime exception is encountered within the minimax solver or request parser.
+Returned when an unexpected runtime exception is encountered within the minimax finder or request parser.
 * **Response Body**:
 ```text
 Error processing request: <error details>

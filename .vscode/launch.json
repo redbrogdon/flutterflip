@@ -8,21 +8,30 @@
             "name": "flutterflip",
             "request": "launch",
             "type": "dart",
-            "cwd": "packages/flutterflip"
+            "cwd": "packages/flutterflip",
+            "toolArgs": [
+                "--dart-define-from-file=config/app_config.local.json"
+            ]
         },
         {
             "name": "flutterflip (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "cwd": "packages/flutterflip"
+            "cwd": "packages/flutterflip",
+            "toolArgs": [
+                "--dart-define-from-file=config/app_config.local.json"
+            ]
         },
         {
             "name": "flutterflip (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "cwd": "packages/flutterflip"
+            "cwd": "packages/flutterflip",
+            "toolArgs": [
+                "--dart-define-from-file=config/app_config.prod.json"
+            ]
         }
     ]
 }
