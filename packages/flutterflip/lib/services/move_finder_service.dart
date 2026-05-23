@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:flutterflip_shared/game_board.dart';
 import 'firebase_finder_client.dart';
 import 'local_finder_client.dart';
@@ -21,23 +20,9 @@ class MoveFinderService {
     int depth,
   ) async {
     try {
-      developer.log(
-        'Attempting to fetch move from remote finder...',
-        name: 'MoveFinderService',
-      );
       final move = await _remoteClient.findNextMove(board, player, depth);
-      developer.log(
-        'Successfully retrieved move from remote finder: ${move != null ? "(${move.x}, ${move.y})" : "PASS"}',
-        name: 'MoveFinderService',
-      );
       return move;
-    } catch (e, stack) {
-      developer.log(
-        'Remote finder failed/unreachable. Falling back to local isolate finder. Error: $e',
-        name: 'MoveFinderService',
-        error: e,
-        stackTrace: stack,
-      );
+    } catch (_) {
       return _localClient.findNextMove(board, player, depth);
     }
   }
