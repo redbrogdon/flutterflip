@@ -1,5 +1,16 @@
 {
-  "functions": {
-    "source": "packages/flutterflip_server"
-  }
+  "functions": [
+    {
+      "codebase": "default",
+      "source": "packages/flutterflip_server",
+      "ignore": [
+        ".dart_tool",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "dart3"
+    }
+  ]
 }
