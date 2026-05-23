@@ -37,11 +37,10 @@ class FlutterFlipApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         return PageRouteBuilder<dynamic>(
           settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              BlocProvider(
-                create: (_) => GameBloc()..add(const StartGame()),
-                child: const GameScreen(),
-              ),
+          pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
+            create: (_) => GameBloc()..add(const StartGame()),
+            child: const GameScreen(),
+          ),
         );
       },
     );
@@ -70,7 +69,8 @@ class GameScreenState extends State<GameScreen> {
         ? '${state.model.blackScore}'
         : '${state.model.whiteScore}';
 
-    final isActive = state.model.player == player && state.status != GameStatus.complete;
+    final isActive =
+        state.model.player == player && state.status != GameStatus.complete;
 
     return DecoratedBox(
       decoration: isActive
@@ -105,8 +105,8 @@ class GameScreenState extends State<GameScreen> {
             duration: const Duration(milliseconds: 500),
             margin: const EdgeInsets.all(1.0),
             decoration: BoxDecoration(
-              gradient:
-                  Styling.pieceGradients[state.model.board.getPieceAtLocation(x, y)],
+              gradient: Styling
+                  .pieceGradients[state.model.board.getPieceAtLocation(x, y)],
             ),
             child: SizedBox(
               width: 40.0,
