@@ -10,7 +10,7 @@ import 'package:flutterflip_shared/move_finder.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Data-Driven Board Tests', () {
+  group('Golden Board Tests', () {
     // Load generated test cases JSON
     final jsonStr = File('test/test_cases.json').readAsStringSync();
     final testCases = jsonDecode(jsonStr) as List<dynamic>;

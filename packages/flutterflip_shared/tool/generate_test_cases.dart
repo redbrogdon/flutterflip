@@ -19,26 +19,47 @@ void main() {
   final rawConfigs = [
     RawBoardConfig(
       'Initial Board',
-      '...........................BW......WB...........................',
+      '........'
+          '........'
+          '........'
+          '...BW...'
+          '...WB...'
+          '........'
+          '........'
+          '........',
     ),
     RawBoardConfig(
       'Corner Play Opportunity',
-      '.WB.............................................................',
+      '........'
+          '........'
+          '........'
+          '.W......'
+          '..B.....'
+          '........'
+          '........'
+          '........',
     ),
     RawBoardConfig(
       'Blocked Opponent (White has no legal moves)',
-      'BBBBBBBB' // Row 0
-          'BW......' // Row 1
-          '........' // Row 2
-          '........' // Row 3
-          'BBBBBW..' // Row 4
-          '........' // Row 5
-          '........' // Row 6
-          '.......W', // Row 7
+      'BBBBBBBB'
+          'BW......'
+          '........'
+          '........'
+          'BBBBBW..'
+          '........'
+          '........'
+          '.......W',
     ),
     RawBoardConfig(
       'Completed Match (All Black)',
-      'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+      'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB',
     ),
   ];
 

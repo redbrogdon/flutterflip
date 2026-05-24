@@ -69,46 +69,46 @@
   },
   {
     "name": "Corner Play Opportunity",
-    "board": ".WB.............................................................",
+    "board": ".........................W........B.............................",
     "blackPieceCount": 1,
     "whitePieceCount": 1,
-    "blackScore": 1100,
-    "whiteScore": -1100,
+    "blackScore": 49,
+    "whiteScore": -49,
     "blackAvailableMoves": [
       {
         "x": 0,
-        "y": 0
+        "y": 2
       }
     ],
     "whiteAvailableMoves": [
       {
         "x": 3,
-        "y": 0
+        "y": 5
       }
     ],
     "blackBestMoveDepth1": {
       "x": 0,
-      "y": 0
+      "y": 2
     },
     "blackBestMoveDepth3": {
       "x": 0,
-      "y": 0
+      "y": 2
     },
     "blackBestMoveDepth5": {
       "x": 0,
-      "y": 0
+      "y": 2
     },
     "whiteBestMoveDepth1": {
       "x": 3,
-      "y": 0
+      "y": 5
     },
     "whiteBestMoveDepth3": {
       "x": 3,
-      "y": 0
+      "y": 5
     },
     "whiteBestMoveDepth5": {
       "x": 3,
-      "y": 0
+      "y": 5
     }
   },
   {
