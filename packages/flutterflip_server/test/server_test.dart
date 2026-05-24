@@ -85,60 +85,73 @@ void main() {
       expect(body, contains('Invalid "board" parameter content'));
     });
 
-    test('Successful GET requests return 200 with best move and correct headers', () async {
-      // Standard initial Reversi board string
-      final boardStr = 
-          '...........................BW......WB...........................';
-      final request = Request(
-        'GET',
-        Uri.parse('http://localhost/getMove?player=black&depth=3&board=$boardStr'),
-      );
+    test(
+      'Successful GET requests return 200 with best move and correct headers',
+      () async {
+        // Standard initial Reversi board string
+        final boardStr =
+            '...........................BW......WB...........................';
+        final request = Request(
+          'GET',
+          Uri.parse(
+            'http://localhost/getMove?player=black&depth=3&board=$boardStr',
+          ),
+        );
 
-      final response = await handleGetMove(request);
-      
-      // Assert HTTP status code
-      expect(response.statusCode, equals(200));
+        final response = await handleGetMove(request);
 
-      // Assert Headers
-      expect(response.headers['content-type'], equals('application/json'));
-      expect(response.headers['cache-control'], equals('public, max-age=3600'));
+        // Assert HTTP status code
+        expect(response.statusCode, equals(200));
 
-      // Assert Response Body
-      final bodyStr = await response.readAsString();
-      final body = jsonDecode(bodyStr) as Map<String, dynamic>;
-      
-      expect(body.containsKey('move'), isTrue);
-      final move = body['move'] as Map<String, dynamic>?;
-      expect(move, isNotNull);
-      expect(move!['x'], isA<int>());
-      expect(move['y'], isA<int>());
-    });
+        // Assert Headers
+        expect(response.headers['content-type'], equals('application/json'));
+        expect(
+          response.headers['cache-control'],
+          equals('public, max-age=3600'),
+        );
 
-    test('Successful GET requests return move: null when no valid moves exist', () async {
-      // Board with only black pieces (no moves can be made by either side)
-      final boardStr = 'B' * 64;
-      final request = Request(
-        'GET',
-        Uri.parse('http://localhost/getMove?player=black&board=$boardStr'),
-      );
+        // Assert Response Body
+        final bodyStr = await response.readAsString();
+        final body = jsonDecode(bodyStr) as Map<String, dynamic>;
 
-      final response = await handleGetMove(request);
-      expect(response.statusCode, equals(200));
+        expect(body.containsKey('move'), isTrue);
+        final move = body['move'] as Map<String, dynamic>?;
+        expect(move, isNotNull);
+        expect(move!['x'], isA<int>());
+        expect(move['y'], isA<int>());
+      },
+    );
 
-      final bodyStr = await response.readAsString();
-      final body = jsonDecode(bodyStr) as Map<String, dynamic>;
-      
-      expect(body.containsKey('move'), isTrue);
-      expect(body['move'], isNull);
-    });
+    test(
+      'Successful GET requests return move: null when no valid moves exist',
+      () async {
+        // Board with only black pieces (no moves can be made by either side)
+        final boardStr = 'B' * 64;
+        final request = Request(
+          'GET',
+          Uri.parse('http://localhost/getMove?player=black&board=$boardStr'),
+        );
+
+        final response = await handleGetMove(request);
+        expect(response.statusCode, equals(200));
+
+        final bodyStr = await response.readAsString();
+        final body = jsonDecode(bodyStr) as Map<String, dynamic>;
+
+        expect(body.containsKey('move'), isTrue);
+        expect(body['move'], isNull);
+      },
+    );
 
     test('Excessive depth parameter is clamped safely', () async {
-      final boardStr = 
+      final boardStr =
           '...........................BW......WB...........................';
       // Requesting depth 10 (should be clamped to 6 silently and resolve successfully)
       final request = Request(
         'GET',
-        Uri.parse('http://localhost/getMove?player=black&depth=10&board=$boardStr'),
+        Uri.parse(
+          'http://localhost/getMove?player=black&depth=10&board=$boardStr',
+        ),
       );
 
       final response = await handleGetMove(request);

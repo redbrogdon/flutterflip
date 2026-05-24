@@ -51,9 +51,7 @@ Future<Response> handleGetMove(Request request) async {
 
     return Response.ok(
       jsonEncode({
-        'move': bestMove != null
-            ? {'x': bestMove.x, 'y': bestMove.y}
-            : null,
+        'move': bestMove != null ? {'x': bestMove.x, 'y': bestMove.y} : null,
       }),
       headers: {
         'content-type': 'application/json',

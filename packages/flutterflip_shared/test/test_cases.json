@@ -1,0 +1,176 @@
+[
+  {
+    "name": "Initial Board",
+    "board": "...........................BW......WB...........................",
+    "blackPieceCount": 2,
+    "whitePieceCount": 2,
+    "blackScore": 0,
+    "whiteScore": 0,
+    "blackAvailableMoves": [
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 5
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 5,
+        "y": 3
+      }
+    ],
+    "whiteAvailableMoves": [
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 4,
+        "y": 5
+      },
+      {
+        "x": 5,
+        "y": 4
+      }
+    ],
+    "blackBestMoveDepth1": {
+      "x": 2,
+      "y": 4
+    },
+    "blackBestMoveDepth3": {
+      "x": 2,
+      "y": 4
+    },
+    "blackBestMoveDepth5": {
+      "x": 2,
+      "y": 4
+    },
+    "whiteBestMoveDepth1": {
+      "x": 2,
+      "y": 3
+    },
+    "whiteBestMoveDepth3": {
+      "x": 2,
+      "y": 3
+    },
+    "whiteBestMoveDepth5": {
+      "x": 2,
+      "y": 3
+    }
+  },
+  {
+    "name": "Corner Play Opportunity",
+    "board": ".WB.............................................................",
+    "blackPieceCount": 1,
+    "whitePieceCount": 1,
+    "blackScore": 1100,
+    "whiteScore": -1100,
+    "blackAvailableMoves": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "whiteAvailableMoves": [
+      {
+        "x": 3,
+        "y": 0
+      }
+    ],
+    "blackBestMoveDepth1": {
+      "x": 0,
+      "y": 0
+    },
+    "blackBestMoveDepth3": {
+      "x": 0,
+      "y": 0
+    },
+    "blackBestMoveDepth5": {
+      "x": 0,
+      "y": 0
+    },
+    "whiteBestMoveDepth1": {
+      "x": 3,
+      "y": 0
+    },
+    "whiteBestMoveDepth3": {
+      "x": 3,
+      "y": 0
+    },
+    "whiteBestMoveDepth5": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "name": "Blocked Opponent (White has no legal moves)",
+    "board": "BBBBBBBBBW......................BBBBBW.........................W",
+    "blackPieceCount": 14,
+    "whitePieceCount": 3,
+    "blackScore": 8503,
+    "whiteScore": -8503,
+    "blackAvailableMoves": [
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 6,
+        "y": 4
+      }
+    ],
+    "whiteAvailableMoves": [],
+    "blackBestMoveDepth1": {
+      "x": 6,
+      "y": 4
+    },
+    "blackBestMoveDepth3": {
+      "x": 0,
+      "y": 2
+    },
+    "blackBestMoveDepth5": {
+      "x": 0,
+      "y": 2
+    },
+    "whiteBestMoveDepth1": null,
+    "whiteBestMoveDepth3": null,
+    "whiteBestMoveDepth5": null
+  },
+  {
+    "name": "Completed Match (All Black)",
+    "board": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "blackPieceCount": 64,
+    "whitePieceCount": 0,
+    "blackScore": 1000000000,
+    "whiteScore": -1000000000,
+    "blackAvailableMoves": [],
+    "whiteAvailableMoves": [],
+    "blackBestMoveDepth1": null,
+    "blackBestMoveDepth3": null,
+    "blackBestMoveDepth5": null,
+    "whiteBestMoveDepth1": null,
+    "whiteBestMoveDepth3": null,
+    "whiteBestMoveDepth5": null
+  }
+]
