@@ -172,5 +172,65 @@
     "whiteBestMoveDepth1": null,
     "whiteBestMoveDepth3": null,
     "whiteBestMoveDepth5": null
+  },
+  {
+    "name": "One Empty Square (Either Player Can Play)",
+    "board": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWBBBBBBWB.",
+    "blackPieceCount": 61,
+    "whitePieceCount": 2,
+    "blackScore": 22020,
+    "whiteScore": -22020,
+    "blackAvailableMoves": [
+      {
+        "x": 7,
+        "y": 7
+      }
+    ],
+    "whiteAvailableMoves": [
+      {
+        "x": 7,
+        "y": 7
+      }
+    ],
+    "blackBestMoveDepth1": {
+      "x": 7,
+      "y": 7
+    },
+    "blackBestMoveDepth3": {
+      "x": 7,
+      "y": 7
+    },
+    "blackBestMoveDepth5": {
+      "x": 7,
+      "y": 7
+    },
+    "whiteBestMoveDepth1": {
+      "x": 7,
+      "y": 7
+    },
+    "whiteBestMoveDepth3": {
+      "x": 7,
+      "y": 7
+    },
+    "whiteBestMoveDepth5": {
+      "x": 7,
+      "y": 7
+    }
+  },
+  {
+    "name": "Completely Empty Board",
+    "board": "................................................................",
+    "blackPieceCount": 0,
+    "whitePieceCount": 0,
+    "blackScore": 0,
+    "whiteScore": 0,
+    "blackAvailableMoves": [],
+    "whiteAvailableMoves": [],
+    "blackBestMoveDepth1": null,
+    "blackBestMoveDepth3": null,
+    "blackBestMoveDepth5": null,
+    "whiteBestMoveDepth1": null,
+    "whiteBestMoveDepth3": null,
+    "whiteBestMoveDepth5": null
   }
 ]

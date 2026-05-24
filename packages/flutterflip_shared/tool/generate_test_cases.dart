@@ -61,6 +61,28 @@ void main() {
           'BBBBBBBB'
           'BBBBBBBB',
     ),
+    RawBoardConfig(
+      'One Empty Square (Either Player Can Play)',
+      'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBBB'
+          'BBBBBBWB'
+          'BBBBBWB.',
+    ),
+    RawBoardConfig(
+      'Completely Empty Board',
+      '........'
+          '........'
+          '........'
+          '........'
+          '........'
+          '........'
+          '........'
+          '........',
+    ),
   ];
 
   final testCases = <Map<String, dynamic>>[];
