@@ -30,6 +30,10 @@ jobs:
     - name: Analyze
       run: dart analyze --fatal-infos packages/flutterflip_shared
 
+    - name: Run Tests
+      working-directory: packages/flutterflip_shared
+      run: dart test
+
   server:
     name: "Server Package"
     runs-on: ubuntu-latest
@@ -51,6 +55,10 @@ jobs:
 
     - name: Analyze
       run: dart analyze --fatal-infos packages/flutterflip_server
+
+    - name: Run Tests
+      working-directory: packages/flutterflip_server
+      run: dart test
 
   client:
     name: "Client App Package"
