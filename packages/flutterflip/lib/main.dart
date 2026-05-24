@@ -112,6 +112,7 @@ class GameScreenState extends State<GameScreen> {
               width: 40.0,
               height: 40.0,
               child: GestureDetector(
+                key: ValueKey('cell_${x}_$y'),
                 onTap: () {
                   _attemptUserMove(context, x, y);
                 },
