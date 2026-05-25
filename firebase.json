@@ -5,6 +5,7 @@
       "source": "packages/flutterflip_server",
       "ignore": [
         ".dart_tool",
+        "specs",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
