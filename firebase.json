@@ -14,7 +14,7 @@
     }
   ],
   "hosting": {
-    "target": "flutterflip",
+    "site": "flutterflip",
     "public": "packages/flutterflip/build/web",
     "ignore": [
       "firebase.json",
