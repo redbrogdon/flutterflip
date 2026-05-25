@@ -54,6 +54,7 @@ app.*.map.json
 *-debug.log
 **/functions.yaml
 node_modules/
+packages/flutterflip_server/bin/server
 
 # Local Environment Configuration
 **/config/*.local.json

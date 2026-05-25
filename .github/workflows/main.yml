@@ -85,3 +85,27 @@ jobs:
     - name: Run Tests
       working-directory: packages/flutterflip
       run: flutter test
+
+  build_and_deploy:
+    needs: [ client ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/flutterflip
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web Application
+        run: flutter build web --dart-define-from-file=config/app_config.prod.json
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REDBROGDON_DEV }}
+          channelId: live
+          projectId: redbrogdon-dev

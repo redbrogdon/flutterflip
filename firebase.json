@@ -12,5 +12,14 @@
       ],
       "runtime": "dart3"
     }
-  ]
+  ],
+  "hosting": {
+    "target": "flutterflip",
+    "public": "packages/flutterflip/build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
 }
