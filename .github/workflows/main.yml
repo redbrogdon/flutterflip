@@ -102,7 +102,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Web Application
-        run: flutter build web --dart-define-from-file=config/app_config.prod.json
+        run: flutter build web --wasm --dart-define-from-file=config/app_config.prod.json
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
