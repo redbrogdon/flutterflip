@@ -10,7 +10,10 @@ void main(List<String> args) {
       name: 'getMove',
       handleGetMove,
       options: const HttpsOptions(
-        cors: Cors(['https://flutterflip.web.app', 'https://redbrogdon.dev']),
+        cors: Cors([
+          'https://flutterflip.web.app',
+          'https://redbrogdon.dev',
+        ]),
       ),
     );
   });
