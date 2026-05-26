@@ -6,7 +6,13 @@ import 'package:flutterflip_shared/move_finder.dart';
 void main(List<String> args) {
   fireUp(args, (Firebase firebase) {
     // Find Move Endpoint
-    firebase.https.onRequest(name: 'getMove', handleGetMove);
+    firebase.https.onRequest(
+      name: 'getMove',
+      handleGetMove,
+      options: const HttpsOptions(
+        cors: Cors(['https://flutterflip.web.app', 'https://redbrogdon.dev']),
+      ),
+    );
   });
 }
 
