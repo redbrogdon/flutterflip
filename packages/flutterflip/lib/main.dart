@@ -259,7 +259,7 @@ class GameScreenState extends State<GameScreen> {
                       height: 10.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Styling.oldGoldColor.withOpacity(0.4),
+                        color: Styling.oldGoldColor.withValues(alpha: 0.4),
                         border: Border.all(
                           color: Styling.oldGoldColor,
                           width: 1.5,

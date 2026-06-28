@@ -14,8 +14,12 @@ abstract class Styling {
 
   static const oldGoldColor = Color(0xffb89730); // Burnished old gold
   static const brownColor = Color(0xff2b140b); // Mahogany dark brown
-  static const backgroundStartColor = Color(0xff0d2e13); // Deep British Racing Green felt
-  static const backgroundFinishColor = Color(0xff051406); // Darkest shadow green
+  static const backgroundStartColor = Color(
+    0xff0d2e13,
+  ); // Deep British Racing Green felt
+  static const backgroundFinishColor = Color(
+    0xff051406,
+  ); // Darkest shadow green
   static const thinkingColor = Color(0xa0ffffff);
 
   static const Map<PieceType, LinearGradient> pieceGradients = {

@@ -107,7 +107,7 @@ class AnimatedCirclesState extends State<AnimatedCircles>
             color: Color(0x40000000),
             blurRadius: 1.0,
             offset: Offset(0.0, 1.0),
-          )
+          ),
         ],
       ),
     );
