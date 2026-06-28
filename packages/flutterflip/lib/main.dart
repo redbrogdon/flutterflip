@@ -47,6 +47,121 @@ class FlutterFlipApp extends StatelessWidget {
   }
 }
 
+/// A stateful game piece that animates its transition between colors
+/// using a 3D Y-axis rotation and perspective projection.
+class FlippingPiece extends StatefulWidget {
+  final PieceType type;
+
+  const FlippingPiece({super.key, required this.type});
+
+  @override
+  State<FlippingPiece> createState() => _FlippingPieceState();
+}
+
+class _FlippingPieceState extends State<FlippingPiece>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late PieceType _displayedType;
+  PieceType? _targetType;
+
+  @override
+  void initState() {
+    super.initState();
+    _displayedType = widget.type;
+    _controller = AnimationController(
+      vsync: this,
+      duration: Styling.pieceFlipDuration,
+    );
+  }
+
+  @override
+  void didUpdateWidget(FlippingPiece oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.type != widget.type) {
+      final isFlip =
+          (oldWidget.type == PieceType.black &&
+              widget.type == PieceType.white) ||
+          (oldWidget.type == PieceType.white && widget.type == PieceType.black);
+
+      if (isFlip) {
+        _targetType = widget.type;
+        _controller.forward(from: 0.0).then((_) {
+          if (mounted) {
+            setState(() {
+              _displayedType = widget.type;
+              _targetType = null;
+              _controller.reset();
+            });
+          }
+        });
+      } else {
+        setState(() {
+          _displayedType = widget.type;
+          _targetType = null;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_targetType == null) {
+      return _buildPiece(_displayedType);
+    }
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final val = _controller.value;
+        final angle = val * 3.141592653589793;
+        final isFront = val < 0.5;
+        final displayType = isFront ? _displayedType : _targetType!;
+        final transformAngle = isFront ? angle : angle - 3.141592653589793;
+
+        return Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.002) // Perspective projection
+            ..rotateY(transformAngle),
+          alignment: Alignment.center,
+          child: _buildPiece(displayType),
+        );
+      },
+    );
+  }
+
+  Widget _buildPiece(PieceType type) {
+    if (type == PieceType.empty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(3.0),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: Styling.pieceGradients[type],
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x70000000),
+            blurRadius: 4.0,
+            offset: Offset(1.0, 3.0),
+          ),
+          BoxShadow(
+            color: Color(0x1affffff),
+            blurRadius: 1.0,
+            offset: Offset(-1.0, -1.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// The [GameScreen] Widget represents the entire game
 /// display, from scores to board state and everything in between.
 class GameScreen extends StatefulWidget {
@@ -58,7 +173,6 @@ class GameScreen extends StatefulWidget {
 
 /// State class for [GameScreen].
 class GameScreenState extends State<GameScreen> {
-  // Tapping a grid cell dispatches a PlayMove event to the BLoC.
   void _attemptUserMove(BuildContext context, int x, int y) {
     context.read<GameBloc>().add(PlayMove(x, y));
   }
@@ -72,21 +186,31 @@ class GameScreenState extends State<GameScreen> {
     final isActive =
         state.model.player == player && state.status != GameStatus.complete;
 
-    return DecoratedBox(
-      decoration: isActive
-          ? Styling.activePlayerIndicator
-          : Styling.inactivePlayerIndicator,
+    // "Old money" elegant state changes: active glows in gold, inactive is muted parchment grey
+    final labelStyle = Styling.scoreLabelText.copyWith(
+      color: isActive ? Styling.oldGoldColor : const Color(0xff706a5e),
+      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+    );
+
+    final scoreStyle = Styling.scoreText.copyWith(
+      color: isActive ? const Color(0xffe6dfd3) : const Color(0xff706a5e),
+      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         children: <Widget>[
           Text(
             label,
             textAlign: TextAlign.center,
-            style: Styling.scoreLabelText,
+            style: labelStyle,
           ),
+          const SizedBox(height: 4.0),
           Text(
             scoreText,
             textAlign: TextAlign.center,
-            style: Styling.scoreText,
+            style: scoreStyle,
           ),
         ],
       ),
@@ -100,22 +224,49 @@ class GameScreenState extends State<GameScreen> {
       final spots = <Widget>[];
 
       for (var x = 0; x < GameBoard.width; x++) {
+        final pieceType = state.model.board.getPieceAtLocation(x, y);
+        final isLegal =
+            state.status == GameStatus.readyForPlayer &&
+            state.model.board.isLegalMove(x, y, state.model.player);
+
         spots.add(
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 500),
-            margin: const EdgeInsets.all(1.0),
+          Container(
+            margin: const EdgeInsets.all(0.5),
+            width: 44.0,
+            height: 44.0,
             decoration: BoxDecoration(
-              gradient: Styling
-                  .pieceGradients[state.model.board.getPieceAtLocation(x, y)],
+              color: const Color(
+                0xff143d1a,
+              ), // Darker rich felt green cell base
+              border: Border.all(
+                color: const Color(0xff091a0c),
+                width: 0.5,
+              ), // Darkest felt grid line
             ),
-            child: SizedBox(
-              width: 40.0,
-              height: 40.0,
-              child: GestureDetector(
-                key: ValueKey('cell_${x}_$y'),
-                onTap: () {
-                  _attemptUserMove(context, x, y);
-                },
+            child: GestureDetector(
+              key: ValueKey('cell_${x}_$y'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                _attemptUserMove(context, x, y);
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  FlippingPiece(type: pieceType),
+                  if (pieceType == PieceType.empty && isLegal)
+                    Container(
+                      width: 10.0,
+                      height: 10.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Styling.oldGoldColor.withOpacity(0.4),
+                        border: Border.all(
+                          color: Styling.oldGoldColor,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -134,35 +285,61 @@ class GameScreenState extends State<GameScreen> {
     return rows;
   }
 
-  Widget _buildGameResult(BuildContext context, GameState state) {
-    final isComplete = state.status == GameStatus.complete;
-
-    return Opacity(
-      opacity: isComplete ? 1 : 0,
-      child: IgnorePointer(
-        ignoring: !isComplete,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(state.model.gameResultString, style: Styling.resultText),
-            const SizedBox(height: 30),
-            GestureDetector(
-              onTap: () {
-                context.read<GameBloc>().add(const StartGame());
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xe0ffffff)),
-                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(15, 5, 15, 9),
-                  child: Text('new game', style: Styling.buttonText),
+  Widget _buildHeader(BuildContext context, GameState state) {
+    Widget content;
+    if (state.status == GameStatus.complete) {
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(state.model.gameResultString, style: Styling.resultText),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              context.read<GameBloc>().add(const StartGame());
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Styling.brownColor,
+                border: Border.all(color: Styling.oldGoldColor, width: 2.0),
+                borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x60000000),
+                    blurRadius: 4.0,
+                    offset: Offset(0.0, 2.0),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
+                child: Text(
+                  'new game',
+                  style: Styling.buttonText.copyWith(
+                    color: Styling.oldGoldColor,
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      );
+    } else {
+      content = Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildScoreBox(PieceType.black, state),
+          const SizedBox(width: 100),
+          _buildScoreBox(PieceType.white, state),
+        ],
+      );
+    }
+
+    return SizedBox(
+      height: 120.0,
+      child: Center(
+        child: content,
       ),
     );
   }
@@ -170,7 +347,12 @@ class GameScreenState extends State<GameScreen> {
   // Builds out the Widget tree using the GameState from the BlocBuilder.
   Widget _buildWidgets(BuildContext context, GameState state) {
     return Container(
-      padding: const EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
+      padding: const EdgeInsets.only(
+        top: 30.0,
+        bottom: 30.0,
+        left: 15.0,
+        right: 15.0,
+      ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -184,15 +366,7 @@ class GameScreenState extends State<GameScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildScoreBox(PieceType.black, state),
-                  const SizedBox(width: 100),
-                  _buildScoreBox(PieceType.white, state),
-                ],
-              ),
+              _buildHeader(context, state),
               const SizedBox(height: 20),
               ThinkingIndicator(
                 color: Styling.thinkingColor,
@@ -200,10 +374,32 @@ class GameScreenState extends State<GameScreen> {
                 visible: state.status == GameStatus.processing,
               ),
               const SizedBox(height: 20),
-              ..._buildGameBoardDisplay(context, state),
-              const SizedBox(height: 30),
-              _buildGameResult(context, state),
-              const SizedBox(height: 30),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Styling.brownColor, // Wooden frame color
+                  border: Border.all(
+                    color: Styling.oldGoldColor, // Gold trim
+                    width: 3.0,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(
+                        0x90000000,
+                      ), // Slightly darker shadow for richer depth
+                      blurRadius: 16.0,
+                      spreadRadius: 2.0,
+                      offset: Offset(0.0, 8.0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _buildGameBoardDisplay(context, state),
+                ),
+              ),
+              const SizedBox(height: 25.0),
             ],
           ),
         ),

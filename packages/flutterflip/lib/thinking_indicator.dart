@@ -35,7 +35,7 @@ class _ThinkingIndicatorState
         child: Opacity(
           opacity: _opacityTween!.evaluate(animation),
           child: _opacityTween!.evaluate(animation) != 0
-              ? AnimatedCircles(color: widget.color, height: widget.height)
+              ? AnimatedCircles(height: widget.height)
               : null,
         ),
       ),
@@ -55,10 +55,9 @@ class _ThinkingIndicatorState
 }
 
 class AnimatedCircles extends StatefulWidget {
-  final Color color;
   final double height;
 
-  const AnimatedCircles({required this.color, required this.height, super.key});
+  const AnimatedCircles({required this.height, super.key});
 
   @override
   AnimatedCirclesState createState() => AnimatedCirclesState();
@@ -77,8 +76,6 @@ class AnimatedCirclesState extends State<AnimatedCircles>
           duration: const Duration(milliseconds: 500),
           vsync: this,
         )..addStatusListener((status) {
-          // This bit ensures that the animation reverses course rather than
-          // stopping.
           if (status == AnimationStatus.completed) {
             _thinkingController.reverse();
           }
@@ -98,13 +95,20 @@ class AnimatedCirclesState extends State<AnimatedCircles>
     super.dispose();
   }
 
-  Widget _buildCircle() {
+  Widget _buildCircle(Color color) {
     return Container(
       width: widget.height,
       height: widget.height,
       decoration: BoxDecoration(
-        border: Border.all(color: widget.color, width: 2.0),
-        borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x40000000),
+            blurRadius: 1.0,
+            offset: Offset(0.0, 1.0),
+          )
+        ],
       ),
     );
   }
@@ -117,15 +121,15 @@ class AnimatedCirclesState extends State<AnimatedCircles>
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildCircle(),
+            _buildCircle(Styling.oldGoldColor),
             SizedBox(width: _thinkingAnimation.value),
-            _buildCircle(),
+            _buildCircle(Styling.brownColor),
             SizedBox(width: _thinkingAnimation.value),
-            _buildCircle(),
+            _buildCircle(Styling.oldGoldColor),
             SizedBox(width: _thinkingAnimation.value),
-            _buildCircle(),
+            _buildCircle(Styling.brownColor),
             SizedBox(width: _thinkingAnimation.value),
-            _buildCircle(),
+            _buildCircle(Styling.oldGoldColor),
           ],
         );
       },
